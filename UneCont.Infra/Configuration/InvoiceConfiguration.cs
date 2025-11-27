@@ -15,21 +15,7 @@ namespace UneCont.Infra.Configuration
 
             builder.HasIndex(i => i.Number).IsUnique().HasDatabaseName("IX_Invoice_Number");
 
-            builder
-                .HasOne(i => i.Provider)
-                .WithMany(p => p.Invoices)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .HasOne(i => i.Borrower)
-                .WithMany(b => b.Invoices)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .HasOne(i => i.Service)
-                .WithOne(s => s.Invoice)
-                .HasForeignKey<Service>(s => s.InvoiceId)
-                .OnDelete(DeleteBehavior.Restrict);
+            
         }
     }
 }

@@ -12,8 +12,8 @@ using UneCont.Infra.Context;
 namespace UneCont.Infra.Migrations
 {
     [DbContext(typeof(UneContDbContext))]
-    [Migration("20251126204057_InitialState")]
-    partial class InitialState
+    [Migration("20251127223032_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,9 @@ namespace UneCont.Infra.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
+
                     b.ToTable("Borrowers");
                 });
 
@@ -49,23 +52,13 @@ namespace UneCont.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BorrowerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("EmissionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProviderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BorrowerId");
-
-                    b.HasIndex("ProviderId");
 
                     b.ToTable("Invoices");
                 });
@@ -84,6 +77,9 @@ namespace UneCont.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
 
                     b.ToTable("Providers");
                 });
@@ -112,23 +108,26 @@ namespace UneCont.Infra.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("UneCont.Domain.Entities.Invoice", b =>
+            modelBuilder.Entity("UneCont.Domain.Entities.Borrower", b =>
                 {
-                    b.HasOne("UneCont.Domain.Entities.Borrower", "Borrower")
-                        .WithMany("Invoices")
-                        .HasForeignKey("BorrowerId")
+                    b.HasOne("UneCont.Domain.Entities.Invoice", "Invoice")
+                        .WithOne("Borrower")
+                        .HasForeignKey("UneCont.Domain.Entities.Borrower", "InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UneCont.Domain.Entities.Provider", "Provider")
-                        .WithMany("Invoices")
-                        .HasForeignKey("ProviderId")
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("UneCont.Domain.Entities.Provider", b =>
+                {
+                    b.HasOne("UneCont.Domain.Entities.Invoice", "Invoice")
+                        .WithOne("Provider")
+                        .HasForeignKey("UneCont.Domain.Entities.Provider", "InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Borrower");
-
-                    b.Navigation("Provider");
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("UneCont.Domain.Entities.Service", b =>
@@ -142,20 +141,16 @@ namespace UneCont.Infra.Migrations
                     b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("UneCont.Domain.Entities.Borrower", b =>
-                {
-                    b.Navigation("Invoices");
-                });
-
             modelBuilder.Entity("UneCont.Domain.Entities.Invoice", b =>
                 {
+                    b.Navigation("Borrower")
+                        .IsRequired();
+
+                    b.Navigation("Provider")
+                        .IsRequired();
+
                     b.Navigation("Service")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("UneCont.Domain.Entities.Provider", b =>
-                {
-                    b.Navigation("Invoices");
                 });
 #pragma warning restore 612, 618
         }

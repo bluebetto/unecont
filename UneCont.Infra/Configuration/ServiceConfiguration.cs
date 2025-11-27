@@ -12,6 +12,10 @@ namespace UneCont.Infra.Configuration
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Description).IsRequired().HasMaxLength(200);
             builder.Property(s => s.Value).IsRequired();
+
+            builder.HasOne(b => b.Invoice)
+                .WithOne(i => i.Service)
+                .HasForeignKey<Service>(i => i.InvoiceId);
         }
     }
 }

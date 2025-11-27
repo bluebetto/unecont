@@ -2,6 +2,8 @@ namespace UneCont.Domain.Entities
 {
     public class Borrower : BaseCnpjEntity
     {
+        public Invoice Invoice { get; set; }
+        public Guid InvoiceId { get; set; }
         public Borrower() { }
 
         public Borrower(Guid id, string cnpj)
@@ -11,9 +13,5 @@ namespace UneCont.Domain.Entities
             Id = id;
             Cnpj = cnpj;
         }
-
-        public Guid InvoiceId { get; set; }
-
-        public ICollection<Invoice> Invoices { get; set; }
     }
 }

@@ -14,8 +14,8 @@ public static class Program
         // Add services to the container.
         builder
             .Services.AddControllers()
-            .AddXmlSerializerFormatters()
-            .AddXmlDataContractSerializerFormatters();
+            .AddXmlSerializerFormatters();
+
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

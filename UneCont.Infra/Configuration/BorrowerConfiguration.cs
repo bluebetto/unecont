@@ -11,6 +11,10 @@ namespace UneCont.Infra.Configuration
             builder.ToTable("Borrowers");
 
             builder.Property(b => b.Cnpj).IsRequired();
+
+            builder.HasOne(b => b.Invoice)
+                .WithOne(i => i.Borrower)
+                .HasForeignKey<Borrower>(i => i.InvoiceId);
         }
     }
 }

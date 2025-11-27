@@ -6,11 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UneCont.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialState : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Invoices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: false),
+                    EmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Borrowers",
                 columns: table => new
@@ -22,6 +35,12 @@ namespace UneCont.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Borrowers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Borrowers_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,31 +54,10 @@ namespace UneCont.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Providers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Invoices",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    ProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BorrowerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Invoices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invoices_Borrowers_BorrowerId",
-                        column: x => x.BorrowerId,
-                        principalTable: "Borrowers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Invoices_Providers_ProviderId",
-                        column: x => x.ProviderId,
-                        principalTable: "Providers",
+                        name: "FK_Providers_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -85,14 +83,16 @@ namespace UneCont.Infra.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_BorrowerId",
-                table: "Invoices",
-                column: "BorrowerId");
+                name: "IX_Borrowers_InvoiceId",
+                table: "Borrowers",
+                column: "InvoiceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_ProviderId",
-                table: "Invoices",
-                column: "ProviderId");
+                name: "IX_Providers_InvoiceId",
+                table: "Providers",
+                column: "InvoiceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_InvoiceId",
@@ -105,16 +105,16 @@ namespace UneCont.Infra.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Services");
-
-            migrationBuilder.DropTable(
-                name: "Invoices");
-
-            migrationBuilder.DropTable(
                 name: "Borrowers");
 
             migrationBuilder.DropTable(
                 name: "Providers");
+
+            migrationBuilder.DropTable(
+                name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Invoices");
         }
     }
 }

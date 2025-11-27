@@ -1,19 +1,23 @@
 using MediatR;
+using UneCont.Application.Interfaces;
 using UneCont.Application.Invoices.Commands;
 using UneCont.Application.Invoices.Results;
 
+
 namespace UneCont.Application.Invoices.Handlers
 {
-    public class CreateInvoiceCommandHandler
+    public class CreateInvoiceCommandHandler(IInvoiceService invoiceService)
         : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResult>
     {
-        public Task<CreateInvoiceCommandResult> Handle(
+        public async Task<CreateInvoiceCommandResult> Handle(
             CreateInvoiceCommand request,
             CancellationToken cancellationToken
         )
         {
-            Console.WriteLine(request);
-            throw new NotImplementedException();
+            request.Invoice.Id = Guid.NewGuid();
+            await invoiceService.AddAsync(request.Invoice);
+
+            return new CreateInvoiceCommandResult();
         }
     }
 }

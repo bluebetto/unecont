@@ -1,6 +1,6 @@
-using System.Xml;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml;
 using UneCont.Application.Dto;
 using UneCont.Application.Extensions;
 using UneCont.Application.Invoices.Commands;
@@ -10,9 +10,11 @@ namespace UneCont.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InvoicesController(IMediator mediator) : ControllerBase
+    public class NotasController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType<IEnumerable<InvoiceDto>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> IndexAsync()
         {
             var result = await mediator.Send(new GetInvoicesQuery());
@@ -21,6 +23,8 @@ namespace UneCont.Api.Controllers
 
         [HttpPost]
         [Consumes("application/xml", "text/xml", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync([FromBody] XmlElement xmlString)
         {
             try

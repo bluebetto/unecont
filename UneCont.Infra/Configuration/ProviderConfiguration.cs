@@ -11,6 +11,10 @@ namespace UneCont.Infra.Configuration
             builder.ToTable("Providers");
 
             builder.Property(p => p.Cnpj).IsRequired();
+
+            builder.HasOne(b => b.Invoice)
+                .WithOne(i => i.Provider)
+                .HasForeignKey<Provider>(i => i.InvoiceId);
         }
     }
 }
