@@ -15,7 +15,10 @@ namespace UneCont.Infra.Repositories
 
         public async Task<IEnumerable<Invoice>> GetAllAsync()
         {
-            return await _context.Invoices.AsNoTracking().ToListAsync();
+            return await _context.Invoices.Include(i => i.Provider)
+                .Include(i => i.Borrower)
+                .Include(i => i.Service)
+                .AsNoTracking().ToListAsync();
         }
     }
 }
