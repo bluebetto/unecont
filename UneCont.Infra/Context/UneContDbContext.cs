@@ -9,5 +9,10 @@ namespace UneCont.Infra.Context
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Borrower> Borrowers { get; set; }
         public DbSet<Service> Services { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UneContDbContext).Assembly);
+        }
     }
 }
